@@ -101,7 +101,7 @@ public class JavaIPQSTestDBReader {
 
             System.out.println(ip + " has a timezone of " + record.getTimezone());
 
-            System.out.println(ip + " has a geographic location of aproximately: " + record.getLatitude() + ", " + record.getLongitude());
+            System.out.println(ip + " has a geographic location of approximately: " + record.getLatitude() + ", " + record.getLongitude());
 
             System.out.println(ip + " is a " + record.getConnectionType().toString() + " connection. ");
 
