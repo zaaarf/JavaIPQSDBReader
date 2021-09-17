@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.ipqualityscore</groupId>
+	<artifactId>ipqualityscore-java-db-reader</artifactId>
+	<version>1.0.0</version>
+	
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Java implementation of the IPQualityScore flat file database reader.</description>
+	<packaging>jar</packaging>
+
+	<dependencies>
+
+	</dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.7</version>
+			</extension>
+		</extensions>
+	</build>
+	<distributionManagement>
+		<repository>
+			<id>distribution-ftp</id>
+			<url>scp://downloads.ipqualityscore.com:609/var/www/IPQ/maven2</url>
+		</repository>
+	</distributionManagement>
+</project>
