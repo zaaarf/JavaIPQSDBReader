@@ -6,16 +6,14 @@
 	<p>
         The IPQS Java reader brings a new standard of performance and compression to our IP reputation and geo location services. Setting up and using the reader can be achieved in minutes.
     </p>
+    <p>
+	    You can find the full <a href="https://www.ipqualityscore.com/documentation/ip-reputation-database/java" target="_blank">Java IPQualityScore DB Reader Documentation here</a> or view a description of what our <a href="https://www.ipqualityscore.com/proxy-detection-database" target="_blank">proxy detection database does here</a>.
+	</p>
     <h6 class="text-bold headerHR">Installation</h6>
 	<div class="spacing-10"></div>
 		<p>
-        Installation can be achieved using maven. For further directions visit our documentation page:
+        Installation can be achieved using maven or included manually in your source build. To install via maven <a href="https://www.ipqualityscore.com/documentation/ip-reputation-database/java" target="_blank">view our install documentation here</a>.
     </p>
-    <div class="row">
-		<div class="col-md-12">
-			<a href="https://www.ipqualityscore.com/documentation/ip-reputation-database/java">IPQualityScore Java DB Reader Documentation</a>
-        </div>
-    </div>
     <h6 class="text-bold headerHR">Usage</h6>
 	<div class="spacing-10"></div>
 	<p>
