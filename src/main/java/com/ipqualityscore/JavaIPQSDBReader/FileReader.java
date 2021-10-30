@@ -1,10 +1,11 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.net.InetAddress;
+import java.io.RandomAccessFile;
+import java.net.UnknownHostException;
+import java.util.HashMap;
 
 public class FileReader {
     public IPQSRecord Fetch(String ip) throws IOException {
@@ -16,48 +17,54 @@ public class FileReader {
             throw new IOException("Attemtped to look up IPv6 using IPv4 database file. Aborting.");
         }
 
-        String literal = convertIPToBinaryLiteral(ip);
         int position = 0;
-
+        long[] previous = new long[128];
         long file_position = getTreeStart() + 5;
-        while(true){
+        StringBuilder literal = new StringBuilder(convertIPToBinaryLiteral(ip));
+
+        for(int l = 0;l<257;l++){
+            previous[position] = file_position;
+
             if(literal.length() <= position){
-                throw new IOException("Invalid or nonexistant IP address specified for lookup. (EID: 8)");
+                throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 8)");
             }
 
             byte[] read = new byte[4];
             if(literal.charAt(position) == '0'){
                 getHandler().seek(file_position);
+                getHandler().read(read);
+                file_position = Utility.toUnsignedInt(read);
             } else {
                 getHandler().seek(file_position + 4);
+                getHandler().read(read);
+                file_position = Utility.toUnsignedInt(read);
             }
 
-            getHandler().read(read);
+            if(BlacklistFile == false){
+                if(file_position == 0){
+                    for(int i = 0; i <= position; i++){
+                        if(literal.charAt(position - i) == '1'){
+                            literal.setCharAt(position - i, '0');
 
-            long next = Utility.toUnsignedInt(read);
+                            for(int n = (position - i + 1);n < literal.length();n++){
+                                literal.setCharAt(n, '1');
+                            }
 
-            if(next == 0){
-                if(literal.charAt(position) == '1'){
-                    getHandler().seek(file_position);
-                    getHandler().read(read);
-
-                    next = Utility.toUnsignedInt(read);
-                    if(next == 0){
-                        throw new IOException("Invalid or nonexistant IP address specified for lookup. (EID: 10)");
+                            position = position - i;
+                            file_position = previous[position];
+                            break;
+                        }
                     }
-                } else {
-                    getHandler().seek(file_position + 4);
-                    getHandler().read(read);
 
-                    next = Utility.toUnsignedInt(read);
-                    if(next == 0){
-                        throw new IOException("Invalid or nonexistant IP address specified for lookup. (EID: 9)");
-                    }
+                    continue;
                 }
             }
 
-            file_position = next;
             if(file_position < getTreeEnd()){
+                if(file_position == 0){
+                    break;
+                }
+
                 position++;
                 continue;
             }
@@ -71,8 +78,10 @@ public class FileReader {
                 return record;
             }
 
-            throw new IOException("Invalid or nonexistant IP address specified for lookup. (EID: 12)");
+            throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 12)");
         }
+
+        throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 12)");
     }
 
     private String convertIPToBinaryLiteral(String ip) throws UnknownHostException {
@@ -92,6 +101,7 @@ public class FileReader {
     private boolean IPv6;
     private boolean Valid;
     private boolean BinaryData;
+    private boolean BlacklistFile;
     private ArrayList<Column> Columns = new ArrayList<Column>();
 
     public RandomAccessFile getHandler() {
@@ -134,6 +144,10 @@ public class FileReader {
         TreeEnd = treeEnd;
     }
 
+    public void setBlacklistFile(boolean blacklistFile){ BlacklistFile = blacklistFile; }
+
+    public boolean getBlacklistFile(){ return BlacklistFile; }
+
     public boolean isIPv6() {
         return IPv6;
     }
@@ -164,5 +178,14 @@ public class FileReader {
 
     public void setColumns(ArrayList<Column> columns) {
         Columns = columns;
+    }
+
+    private HashMap<String, String> countrylist;
+    public String ConvertCountry(String cc) throws IOException {
+        if(countrylist == null){
+            countrylist = Utility.GetCountryList();
+        }
+
+        return countrylist.get(cc);
     }
 }

@@ -1,12 +1,16 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class IPQSRecord {
+    private FileReader fileReader;
 
     public boolean parse(FileReader file, byte[] raw) throws IOException {
+        this.fileReader = file;
+
         int current_byte = 0;
         if(file.hasBinaryData()){
             processFirstByte(raw[0]);
@@ -165,6 +169,10 @@ public class IPQSRecord {
         if(mask.Has(Bitmask.PublicAccessPoint)){
             setPublicAccessPoint(true);
         }
+    }
+
+    public String getCountryName() throws IOException {
+        return fileReader.ConvertCountry(Country);
     }
 
     public boolean isProxy() {

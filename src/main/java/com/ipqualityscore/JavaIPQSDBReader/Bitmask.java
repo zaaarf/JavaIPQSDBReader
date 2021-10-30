@@ -7,14 +7,17 @@ public class Bitmask {
     // Subset 1
     public static final int IPv4Map = 1;
     public static final int IPv6Map = 2;
+    public static final int BlacklistData = 4;
+    public static final int BinaryData = 128;
+
+    // Subset 2
     public static final int TreeData = 4;
     public static final int StringData = 8;
     public static final int SmallIntData = 16;
     public static final int IntData = 32;
     public static final int FloatData = 64;
-    public static final int BinaryData = 128;
 
-    // Subset 2
+    // Subset 3
     public static final int IsProxy = 1;
     public static final int IsVPN = 2;
     public static final int IsTOR = 4;
@@ -24,7 +27,7 @@ public class Bitmask {
     public static final int IsBlacklisted = 64;
     public static final int IsPrivate = 128;
 
-    // Subset 3
+    // Subset 4
     public static final int IsMobile = 1;
     public static final int HasOpenPorts = 2;
     public static final int IsHostingProvider = 4;
@@ -34,7 +37,7 @@ public class Bitmask {
     public static final int ReservedOne = 64;
     public static final int ReservedTwo = 128;
 
-    // Subset 4
+    // Subset 5
     public static final int ReservedThree = 1;
     public static final int ReservedFour = 2;
     public static final int ReservedFive = 4;

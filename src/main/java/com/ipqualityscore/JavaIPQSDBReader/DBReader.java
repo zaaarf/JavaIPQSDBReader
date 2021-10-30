@@ -23,6 +23,10 @@ public class DBReader {
             reader.setIPv6(true);
         }
 
+        if(fb.Has(Bitmask.BlacklistData)){
+            reader.setBlacklistFile(true);
+        }
+
         if(reader.isValid() == false){
             throw new IOException("Invalid file format, invalid first byte, EID 1.");
         }
