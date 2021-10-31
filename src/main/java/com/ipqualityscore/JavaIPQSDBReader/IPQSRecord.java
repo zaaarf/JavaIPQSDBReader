@@ -171,7 +171,15 @@ public class IPQSRecord {
         }
     }
 
-    public String getCountryName() throws IOException {
+    public String getCountryName() {
+        try {
+            return fileReader.ConvertCountry(Country);
+        } catch(IOException e){}
+
+        return "N/A";
+    }
+
+    public String getRawCountryName()  throws IOException {
         return fileReader.ConvertCountry(Country);
     }
 
