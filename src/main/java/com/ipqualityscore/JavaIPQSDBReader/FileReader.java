@@ -1,6 +1,7 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.util.ArrayList;
 import java.net.InetAddress;
 import java.io.RandomAccessFile;
@@ -24,7 +25,6 @@ public class FileReader {
 
         for(int l = 0;l<257;l++){
             previous[position] = file_position;
-
             if(literal.length() <= position){
                 throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 8)");
             }
@@ -86,8 +86,15 @@ public class FileReader {
 
     private String convertIPToBinaryLiteral(String ip) throws UnknownHostException {
         String result = "";
-        for (byte b : InetAddress.getByName(ip).getAddress()) {
-            result = result + String.format("%8s", Integer.toBinaryString(b)).replace(" ", "0");
+        if(ip.contains(":")){
+            Inet6Address ipv6Address = (Inet6Address) Inet6Address.getByName(ip);
+            for (String b : ipv6Address.getCanonicalHostName().split("\\:")){
+                result = result + String.format("%16s", Integer.toBinaryString(Integer.parseInt(b))).replace(" ", "0");
+            }
+        } else {
+            for (String b : ip.split("\\.")){
+                result = result + String.format("%8s", Integer.toBinaryString(Integer.parseInt(b))).replace(" ", "0");
+            }
         }
 
         return result;
