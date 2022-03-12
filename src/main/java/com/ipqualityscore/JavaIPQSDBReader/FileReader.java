@@ -88,8 +88,8 @@ public class FileReader {
         String result = "";
         if(ip.contains(":")){
             Inet6Address ipv6Address = (Inet6Address) Inet6Address.getByName(ip);
-            for (String b : ipv6Address.getCanonicalHostName().split("\\:")){
-                result = result + String.format("%16s", Integer.toBinaryString(Integer.parseInt(b))).replace(" ", "0");
+            for (String b : ipv6Address.getHostAddress().split("\\:")){
+                result = result + String.format("%16s", Integer.toBinaryString(Integer.parseInt(b, 16))).replace(" ", "0");
             }
         } else {
             for (String b : ip.split("\\.")){
