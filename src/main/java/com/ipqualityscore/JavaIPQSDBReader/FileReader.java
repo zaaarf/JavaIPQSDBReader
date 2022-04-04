@@ -1,21 +1,20 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
 import java.io.IOException;
-import java.net.Inet6Address;
-import java.util.ArrayList;
-import java.net.InetAddress;
 import java.io.RandomAccessFile;
+import java.net.Inet6Address;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileReader {
     public IPQSRecord Fetch(String ip) throws IOException {
         IPQSRecord record = new IPQSRecord();
 
-        if(isIPv6() == true && ip.contains(".")){
-            throw new IOException("Attemtped to look up IPv4 using IPv6 database file. Aborting.");
-        } else if(isIPv6() == false && ip.contains(":")){
-            throw new IOException("Attemtped to look up IPv6 using IPv4 database file. Aborting.");
+        if(!isValidIP(ip)){
+            throw new IOException("Invalid IP address specified for lookup.");
         }
 
         int position = 0;
@@ -98,6 +97,35 @@ public class FileReader {
         }
 
         return result;
+    }
+
+    private static final String IPV4_PATTERN = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
+    private static final Pattern ValidIPv4 = Pattern.compile(IPV4_PATTERN);
+
+    private static final String IPV6_PATTERN_GENERIC = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
+    private static final String IPV6_PATTERN_SHORTENED = "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$";
+    private static final Pattern ValidIPv6Generic = Pattern.compile(IPV6_PATTERN_GENERIC);
+    private static final Pattern ValidIPv6Shortened = Pattern.compile(IPV6_PATTERN_SHORTENED);
+
+    private boolean isValidIP(String ip) throws IOException {
+        if(isIPv6() == true) {
+            if (ip.contains(".")) {
+                throw new IOException("Attempted to look up IPv4 using IPv6 database file. Aborting.");
+            }
+
+            if(ValidIPv6Generic.matcher(ip).matches() || ValidIPv6Shortened.matcher(ip).matches()){
+                return true;
+            }
+        } else {
+            if(ip.contains(":")){
+                throw new IOException("Attempted to look up IPv6 using IPv4 database file. Aborting.");
+            }
+
+            Matcher matcher = ValidIPv4.matcher(ip);
+            return matcher.matches();
+        }
+
+        return false;
     }
 
     private RandomAccessFile Handler;

@@ -111,7 +111,6 @@ public class JavaIPQSTestDBReader {
 
             System.out.println(ip + " has a fraud score of " + record.getFraudScore().forStrictness(1) + " for strictness level one.");
         } catch (Exception e){
-            System.out.println("here");
             System.out.println(e.getMessage());
         }
     }

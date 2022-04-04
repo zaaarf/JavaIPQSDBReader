@@ -5,7 +5,7 @@
 	
 	<groupId>com.ipqualityscore</groupId>
 	<artifactId>ipqualityscore-java-db-reader</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.6</version>
 	
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Java implementation of the IPQualityScore flat file database reader.</description>
@@ -39,9 +39,5 @@
 		</extensions>
 	</build>
 	<distributionManagement>
-		<repository>
-			<id>distribution-ftp</id>
-			<url>scp://downloads.ipqualityscore.com:609/var/www/IPQ/maven2</url>
-		</repository>
 	</distributionManagement>
 </project>
