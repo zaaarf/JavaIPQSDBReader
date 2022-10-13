@@ -3,7 +3,7 @@ package com.ipqualityscore.JavaIPQSDBReader;
 public class JavaIPQSTestDBReader {
     public static void example() {
         try {
-            FileReader reader = DBReader.Open("IPQualityScore-IP-Reputation-Database-Sample.ipqs");
+            FileReader reader = DBReader.Open("IPQualityScore-IP-Reputation-Database-IPv4-Sample.ipqs");
             
             String ip = "8.8.0.0";
             IPQSRecord record = reader.Fetch(ip);
@@ -110,6 +110,12 @@ public class JavaIPQSTestDBReader {
             System.out.println(ip + " has a fraud score of " + record.getFraudScore().forStrictness(0) + " for strictness level zero.");
 
             System.out.println(ip + " has a fraud score of " + record.getFraudScore().forStrictness(1) + " for strictness level one.");
+
+            try {
+                System.out.println(ip + " has a fraud score of " + record.getFraudScore().forStrictness(2) + " for strictness level one.");
+            } catch (Exception e){
+                System.out.println("yay");
+            }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
