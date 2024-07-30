@@ -12,7 +12,12 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -25,6 +30,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.3.1</version>
 			</plugin>
 		</plugins>
 		<extensions>

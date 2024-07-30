@@ -1,9 +1,15 @@
-package com.ipqualityscore.JavaIPQSDBReader;
+import com.ipqualityscore.JavaIPQSDBReader.DBReader;
+import com.ipqualityscore.JavaIPQSDBReader.FileReader;
+import com.ipqualityscore.JavaIPQSDBReader.IPQSRecord;
+import org.junit.Test;
 
-public class JavaIPQSTestDBReader {
-	public static void example() {
+import java.nio.file.FileSystems;
+
+public class JavaIPQSDBReaderTest {
+	@Test
+	public void integrationTest() {
 		try {
-			FileReader reader = DBReader.Open("IPQualityScore-IP-Reputation-Database-IPv4-Sample.ipqs");
+			FileReader reader = DBReader.Open(FileSystems.getDefault().getPath("IPQualityScore-IP-Reputation-Database-IPv4-Sample.ipqs"));
 
 			String ip = "8.8.0.0";
 			IPQSRecord record = reader.Fetch(ip);
