@@ -1,9 +1,12 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -22,24 +25,24 @@ public class FileReader {
 		long file_position = getTreeStart() + 5;
 		StringBuilder literal = new StringBuilder(convertIPToBinaryLiteral(ip));
 
-		for(int l = 0;l<257;l++){
+		FileChannel channel = openChannel();
+		for(int l = 0; l < 257; l++){
 			previous[position] = file_position;
 			if(literal.length() <= position){
 				throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 8)");
 			}
 
-			byte[] read = new byte[4];
-			if(literal.charAt(position) == '0'){
-				getHandler().seek(file_position);
-				getHandler().read(read);
-				file_position = Utility.toUnsignedInt(read);
-			} else {
-				getHandler().seek(file_position + 4);
-				getHandler().read(read);
-				file_position = Utility.toUnsignedInt(read);
-			}
+			channel.position(
+				literal.charAt(position) == '0'
+					? file_position
+					: file_position + 4
+			);
 
-			if(BlacklistFile == false){
+			ByteBuffer read = ByteBuffer.allocate(4);
+			channel.read(read);
+			file_position = Utility.toUnsignedInt(read);
+
+			if(!BlacklistFile) {
 				if(file_position == 0){
 					for(int i = 0; i <= position; i++){
 						if(literal.charAt(position - i) == '1'){
@@ -69,17 +72,21 @@ public class FileReader {
 			}
 
 			// In theory we're at a record.
-			byte[] raw = new byte[(int) getRecordBytes()];
-			getHandler().seek(file_position);
-			getHandler().read(raw);
+			ByteBuffer raw = ByteBuffer.allocate((int) getRecordBytes());
 
-			if(record.parse(this, raw)){
+			channel.position(file_position);
+			channel.read(raw);
+
+			if(record.parse(this, raw.array())) {
+				channel.close();
 				return record;
 			}
 
+			channel.close();
 			throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 12)");
 		}
 
+		channel.close();
 		throw new IOException("Invalid or nonexistent IP address specified for lookup. (EID: 12)");
 	}
 
@@ -134,7 +141,7 @@ public class FileReader {
 		return false;
 	}
 
-	private RandomAccessFile Handler;
+	private Path path;
 	private long TotalBytes;
 	private long RecordBytes;
 	private long TreeStart;
@@ -145,12 +152,12 @@ public class FileReader {
 	private boolean BlacklistFile;
 	private ArrayList<Column> Columns = new ArrayList<Column>();
 
-	public RandomAccessFile getHandler() {
-		return Handler;
+	public FileChannel openChannel() throws IOException {
+		return FileChannel.open(path, StandardOpenOption.READ);
 	}
 
-	public void setHandler(RandomAccessFile handler) {
-		Handler = handler;
+	public void setPath(Path path) {
+		this.path = path;
 	}
 
 	public long getTotalBytes() {

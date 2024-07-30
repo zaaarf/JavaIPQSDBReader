@@ -1,7 +1,8 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -101,12 +102,16 @@ public class IPQSRecord {
 	}
 
 	private String getRangedStringValue(FileReader file, byte[] pointer) throws IOException {
-		file.getHandler().seek(Utility.toUnsignedInt(pointer));
-		int totalbvtes = file.getHandler().readUnsignedByte();
+		FileChannel channel = file.openChannel();
+		channel.position(Utility.toUnsignedInt(pointer));
 
-		byte[] raw = new byte[totalbvtes];
-		file.getHandler().read(raw);
-		return new String(raw);
+		ByteBuffer totalBytes = ByteBuffer.allocate(1);
+		channel.read(totalBytes);
+
+		ByteBuffer raw = ByteBuffer.allocate((int) Utility.toUnsignedInt(totalBytes));
+		channel.read(raw);
+		channel.close();
+		return new String(raw.array());
 	}
 
 	private void processFirstByte(byte b){

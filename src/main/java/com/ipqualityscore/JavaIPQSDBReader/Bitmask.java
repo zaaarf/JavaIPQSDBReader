@@ -1,5 +1,7 @@
 package com.ipqualityscore.JavaIPQSDBReader;
 
+import java.nio.ByteBuffer;
+
 public class Bitmask {
 	// Version
 	public static final int ReaderVersion = 1;
@@ -49,7 +51,11 @@ public class Bitmask {
 
 	private int Raw;
 
-	public static Bitmask create(int raw){
+	public static Bitmask create(ByteBuffer buffer) {
+		return Bitmask.create((int) Utility.toUnsignedInt(buffer));
+	}
+
+	public static Bitmask create(int raw) {
 		Bitmask bm = new Bitmask();
 		bm.Set(raw);
 		return bm;

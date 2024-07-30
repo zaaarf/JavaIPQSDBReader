@@ -3,49 +3,46 @@ package com.ipqualityscore.JavaIPQSDBReader;
 import java.io.*;
 import java.io.FileReader;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
-import java.util.stream.Stream;
 
 public class Utility {
-	/*
-	 * Takes an array of unsigned little endian int bytes and converts it to a long.
+	/**
+	 * Takes a ByteBuffer, treating its contents as unsigned little endian int bytes and converts it to a long.
 	 * @return long
 	 */
-	public static final long uVarInt(int[] bytes)
-	{
+	public static long uVarInt(ByteBuffer buffer) {
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		long x = 0;
 		long s = 0;
-		for(int i = 0; i < bytes.length; i++){
-			int b = bytes[i];
-			if(b < 0x80) {
-				return x | b<<s;
+		for(int i = 0; i < buffer.array().length; i++) {
+			int currentUByte = Byte.toUnsignedInt(buffer.get(i));
+			if(currentUByte < 0x80) {
+				return x | (long) currentUByte << s;
 			}
 
-			x |= b&0x7f << s;
+			x |= currentUByte & 0x7fL << s;
 			s += 7;
 		}
 
 		return 0;
 	}
 
-	public static final long uVarInt(byte[] bytes)
-	{
+	/**
+	 * Takes an array of unsigned little endian int bytes and converts it to a long.
+	 * @return long
+	 */
+	public static long uVarInt(byte[] bytes) {
 		long x = 0;
 		long s = 0;
-		for(int i = 0; i < bytes.length; i++){
-			int b = bytes[i];
+		for(int b : bytes) {
 			if(b < 0x80) {
-				return x | b<<s;
+				return x | (long) b << s;
 			}
 
-			x |= b&0x7f << s;
+			x |= b & 0x7fL << s;
 			s += 7;
 		}
 
@@ -110,8 +107,11 @@ public class Utility {
 		return result;
 	}
 
-	public static long toUnsignedInt(byte[] bytes)
-	{
+	public static long toUnsignedInt(ByteBuffer buffer) {
+		return toUnsignedInt(buffer.array()); // made this way to avoid modifying the original
+	}
+
+	public static long toUnsignedInt(byte[] bytes) {
 		ByteBuffer buffer = ByteBuffer.allocate(4).put(bytes);
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		buffer.position(0);
