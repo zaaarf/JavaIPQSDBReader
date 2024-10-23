@@ -279,6 +279,15 @@ try {
                         </td>
                     </tr>
                     <tr>
+						<td>record.getZipcode()</td>
+						<td>string</td>
+						<td>
+                            <p>
+                                Suspected Zipcode of the IP address if available or empty string if unknown.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
 						<td>record.getLatitude()</td>
 						<td>float32</td>
 						<td>
